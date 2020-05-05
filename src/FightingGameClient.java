@@ -1,48 +1,82 @@
-import java.awt.Font;
-import java.awt.Color;
-import java.awt.GridLayout;
-import java.awt.GridBagLayout;
-import java.awt.BorderLayout;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+
 import java.util.Scanner;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.Socket;
 
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 
 
 public class FightingGameClient {
     private Socket socket;
     private Scanner in;
     private PrintWriter out;
+    private Scanner kb; 
+    
+    private String playerCharName;
+    private String opponentCharName;
 
 
     public FightingGameClient(String serverAddress) throws Exception {
 
-        socket = new Socket(serverAddress, 58902);
+        socket = new Socket("localhost", 58902);
         in = new Scanner(socket.getInputStream());
+        kb = new Scanner(System.in);
         out = new PrintWriter(socket.getOutputStream(), true);
 
     }
 
     public void play() throws Exception{
         try {
-            var response = in.nextLine();
-            var character = response.charAt(8);
-            if(response.startsWith("VALID_MOVE")){
-//                messageLabel.setText("Valid move, please wait");
-//                currentSquare.setText(mark);
-//                currentSquare.repaint();
+            
+            //FETCH DATA FROM SOCKET
+            BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            
+            String line;
+            while(br.read()!=-1){
+                System.out.println(br.readLine());
             }
-            else if (response.startsWith("VICTORY")){
-//                JOptionPane.showMessageDialog(frame, "Winner Winner");
-//                break;
-            }
+            System.out.println("asdasdasdasd");
+            
 
+            //GET INPUT TO SEND TO SERVER
+            Scanner kb = new Scanner(System.in);
+            int move = 0;
+            System.out.println("Please enter a move: ");
+            while(move!= 1 && move!=2 ){ //LOOP UNTIL VALID INPUT
+                System.out.println("Please enter a move: ");
+                move = kb.nextInt();
+            }
+            kb.close();
+
+            //SEND DATA TO SERVER
+            OutputStreamWriter  os = new OutputStreamWriter(socket.getOutputStream());
+            PrintWriter out = new PrintWriter(os);
+            out.println(move);
+            os.flush();
+
+
+            /*
+            System.out.println("Please enter a move: ");
+            var scanner = new Scanner(System.in);
+            var in = new Scanner(socket.getInputStream());
+            var out = new PrintWriter(socket.getOutputStream(), true);
+
+            out.println(scanner.nextLine()); //Sends to server outputstream
+            
+            //listen and read from input server. 
+            while(in.hasNextLine()){ 
+                
+                System.out.println(in.nextLine()); //Print stuff from server
+            }
+            
+
+            
+            System.out.println("Exited the while loop in game client!");
+
+            */
         } catch (Exception e){
             e.printStackTrace();
         } finally {
@@ -51,14 +85,11 @@ public class FightingGameClient {
     }
 
     public static void main(String[] args) throws Exception{
-        String s;
-        System.out.println(s);
-        Socket socket;
-        socket = new Socket(s, 58902);
-        if(args.length != 1){
-            System.err.println("Pass the server IP as the sole command line argument");
-            return;
-        }
+      
+        // if(args.length != 1){
+        //     System.err.println("Pass the server IP as the sole command line argument");
+        //     return;
+        // }
         FightingGameClient client = new FightingGameClient(args[0]);
         client.play();
     }
