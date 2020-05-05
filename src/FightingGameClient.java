@@ -35,20 +35,23 @@ public class FightingGameClient {
             BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             
             String line;
-            while(br.read()!=-1){
-                System.out.println(br.readLine());
-            }
-            System.out.println("asdasdasdasd");
+            while((line = br.readLine()) != null && line.length() > 0){
+                System.out.println(line);
+            }    
             
-
             //GET INPUT TO SEND TO SERVER
             Scanner kb = new Scanner(System.in);
             int move = 0;
-            System.out.println("Please enter a move: ");
-            while(move!= 1 && move!=2 ){ //LOOP UNTIL VALID INPUT
-                System.out.println("Please enter a move: ");
-                move = kb.nextInt();
+            while(move!= 1 && move!=2 && move != -1 ){ //LOOP UNTIL VALID INPUT
+                try {
+                    System.out.print("Please enter a move: ");
+                    move = Integer.parseInt(kb.nextLine());
+                } catch (Exception NumberFormatException){
+                    System.out.println("The input you entered is not valid, please try again.");
+                    //move = 1; // fix this shit later 
+                }
             }
+            System.out.println("Move is " + move);
             kb.close();
 
             //SEND DATA TO SERVER

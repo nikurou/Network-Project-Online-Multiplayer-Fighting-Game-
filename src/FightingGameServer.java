@@ -145,7 +145,6 @@ class Game {
                 output.println("MESSAGE WAITING FOR OPPONENT TO CONNECT");
                 //flush here
                 os.flush();
-
                
             }
 
@@ -163,7 +162,6 @@ class Game {
                 output.println("MESSAGE WAITING FOR OPPONENT TO CONNECT");
                 //flush here
                 os.flush();
-
             }
             
             //SWAP USERS
@@ -180,36 +178,38 @@ class Game {
             System.out.println("STATUS  =  WORKING"); 
             System.out.println("HasNextInt() == " + input.hasNextInt());
             
-            while (input.hasNextLine()) {
-                System.out.println(input.nextLine());
-                /*
+            while (input.hasNextInt()) {
+               
+                
                 int command = input.nextInt();
                 System.out.println("The user entered " + command + " as their move");
 
-                while(command != 1 || command!= 2){
-                    command = input.nextInt(); // 1 and 2 
-                    if(command!= 1 || command!= 2 ){
-                        output.println("Invalid input: Please try again");
-                    }
-                }
-
+                //PROCCESS THE MOVE
                 if (command == -1) { //ends the program
+                    System.out.println("Program termination called!");
                     return;
                 // 1 and 2 is the ability number
                 } else if (command == 1 || command == 2) { 
                      processMoveCommand(command);
                 }
-                */
             }
         }
 
         // 
         private void processMoveCommand(int selectAbility) {
 
+            System.out.println("ENTERED PROCESS MOVE COMMAND");
 
+            /*
+            * TODOOOOOOOOOO
+            * Calculate damage and internally in server because both charracters are stored in server
+            * Send that information stats like HP left to both players 
+            * 
+            * 
+            */
             try {
                 // OPPONENT was first player because we already swapped
-
+                
                 opponent.output.println("You used " + opponent.character.move_set[selectAbility-1].toString());
                 output.println("Opponent used " + opponent.character.move_set[selectAbility-1].toString());
                 
