@@ -1,5 +1,5 @@
 
-public class Character {
+public class Character implements Cloneable {
 	
 	String char_name;
 	int health_points;
@@ -49,6 +49,10 @@ public class Character {
 		return moveDescriptionList;
 	}
 	
+	// Return a copy of the current character
+	public Character copy(){  
+		return new Character(this.char_name, this.health_points, this.move_set);
+	}  
 	
 
 }
