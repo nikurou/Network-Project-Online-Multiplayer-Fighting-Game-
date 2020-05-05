@@ -31,13 +31,14 @@ public class FightingGameClient {
     public void play() throws Exception{
         try {
             
-            //FETCH DATA FROM SOCKET
+            //FETCH DATA FROM SOCKET (MOVE LIST and etc)
             BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             
-            String line;
-            while((line = br.readLine()) != null && line.length() > 0){
-                System.out.println(line);
-            }    
+            String line; int i = 0;
+            while((line = br.readLine()) != null && i != 5){    //HARDCODED LENGTH OF MENU SO ANYTIME ALTER, CHECK THIS
+                System.out.println(line + " "  + line.length());  
+                i++;
+            }  
             
             //GET INPUT TO SEND TO SERVER
             Scanner kb = new Scanner(System.in);
@@ -48,37 +49,26 @@ public class FightingGameClient {
                     move = Integer.parseInt(kb.nextLine());
                 } catch (Exception NumberFormatException){
                     System.out.println("The input you entered is not valid, please try again.");
-                    //move = 1; // fix this shit later 
                 }
             }
             System.out.println("Move is " + move);
             kb.close();
-
+            
             //SEND DATA TO SERVER
             OutputStreamWriter  os = new OutputStreamWriter(socket.getOutputStream());
             PrintWriter out = new PrintWriter(os);
             out.println(move);
             os.flush();
 
+            
+    
+            //FETCH DATA AGAIN FOR DAMAGE DONE AND ETC.
+            while((line = br.readLine()) != null && line.length() > 0){
+                System.out.println(line);
+            }    
 
             /*
-            System.out.println("Please enter a move: ");
-            var scanner = new Scanner(System.in);
-            var in = new Scanner(socket.getInputStream());
-            var out = new PrintWriter(socket.getOutputStream(), true);
-
-            out.println(scanner.nextLine()); //Sends to server outputstream
-            
-            //listen and read from input server. 
-            while(in.hasNextLine()){ 
-                
-                System.out.println(in.nextLine()); //Print stuff from server
-            }
-            
-
-            
             System.out.println("Exited the while loop in game client!");
-
             */
         } catch (Exception e){
             e.printStackTrace();

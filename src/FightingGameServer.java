@@ -14,7 +14,7 @@ import java.io.OutputStreamWriter;
 public class FightingGameServer  extends  UserInterface{
     public static void main (String[] args) throws Exception{
 
-        try (var listener = new ServerSocket (58902)){
+        try (var listener = new ServerSocket (58902);){
             System.out.println("Fighting game is Running...");
             var pool = Executors.newFixedThreadPool(200);
             while (true){
@@ -32,6 +32,11 @@ class Game {
     Character playerOneCharacter;
     Character playerTwoCharacter;
     Socket socket;
+
+    int PalaDamage = -1;
+    String PalaMove = null;
+    int DorkaDamage = -1;
+    String DorkaMove = null;
    
 
     // Default Constructor Method 
@@ -60,6 +65,10 @@ class Game {
     }
 
     public synchronized void move(int ability, Player player){
+        System.out.println
+        (
+            "MOVE IS ENTERED"
+        );
 
         if (player != currentPlayer)
             throw new IllegalStateException("Not your turn");
@@ -87,13 +96,16 @@ class Game {
         // PLayer Constructor 
         public Player(Socket socket, String characterName) {
             this.socket = socket;
+            //Client c = new Client(characterName, socket);
             Action actionListObject = new Action();
             
             if(characterName.equals("Paladoof")){
                 this.character = new Character("Paladoof", 125, actionListObject.getPaladinSetList());
+                playerOneCharacter = this.character;
             }
             else if(characterName.equals("Dorkafus")){
                 this.character = new Character("Dorkafus", 50, actionListObject.getMageSetList());
+                playerTwoCharacter = this.character;
             }
             
         }
@@ -128,8 +140,8 @@ class Game {
             output = new PrintWriter(os);
 
 
-            output.println("");
-            output.println("Welcome to the Text Fighter Game " + character.char_name);
+          
+            output.println("\nWelcome to the Text Fighter Game " + character.char_name);
             output.println("-----------------------------------------");
             if (character.char_name.equals("Paladoof")) {// put character name here
                 currentPlayer = this; //check for currentPLayer variable
@@ -142,9 +154,8 @@ class Game {
                     output.println(i+1 + ") " + paladinSetList[i].moveDescriptonsToString());  
                 }
              
-                output.println("MESSAGE WAITING FOR OPPONENT TO CONNECT");
                 //flush here
-                os.flush();
+                //os.flush();
                
             }
 
@@ -159,9 +170,8 @@ class Game {
                     output.println(i+1 + ") " + mageSetList[i].moveDescriptonsToString());  
                 }
                 
-                output.println("MESSAGE WAITING FOR OPPONENT TO CONNECT");
                 //flush here
-                os.flush();
+                //os.flush();
             }
             
             //SWAP USERS
@@ -169,12 +179,12 @@ class Game {
 
             opponent = currentPlayer;
             opponent.opponent = this;
-            opponent.output.println("MESSAGE YOUR MOVE");     
+            opponent.output.println("MESSAGE YOUR MOVE");   
+            os.flush();  
         }
 
         private void processCommands() {
             
-            //DOESNT PRINT FOR SOME REASON, PROCESS COMMAND NEVER REACHED
             System.out.println("STATUS  =  WORKING"); 
             System.out.println("HasNextInt() == " + input.hasNextInt());
             
@@ -196,9 +206,95 @@ class Game {
         }
 
         // 
-        private void processMoveCommand(int selectAbility) {
+        private void processMoveCommand(int selectAbility)  {
+
+           
+        
 
             System.out.println("ENTERED PROCESS MOVE COMMAND");
+   
+            //TEST CODE SENDING SELECTEDABILITY TO ENEMY
+            try{
+                //SEND MOVE TO CLIENT
+                OutputStreamWriter  os = new OutputStreamWriter(socket.getOutputStream());
+                PrintWriter out = new PrintWriter(os);
+                out.println("From Server: " + " move number =" + selectAbility);
+
+                //P1 is always Paladoof 
+                if (character.char_name.equals("Paladoof")){ //get a message than your move hits/nothits dmg/dontdmg
+                    PalaMove  = character.move_set[selectAbility-1].toString();
+                    out.println("You used " + PalaMove);
+                    PalaDamage = character.move_set[selectAbility-1].damage_value;
+
+                    //IF HITS
+                    if( Math.random() < character.move_set[selectAbility-1].accuracy){
+                        System.out.println("IF HIT ENTERED");
+                        out.println("Your move successfully connected! You deal " + PalaDamage + " to the enemy!");
+                    }
+                    else{
+                        PalaDamage = 0;
+                        System.out.println("MOVE MISSED");
+                        out.println("Your move missed! You deal " + PalaDamage + " to the enemy");
+                    }
+
+                    
+                    // DIALOGUE RESPONSE TO ENEMY'S MOVE
+                    if(DorkaDamage != 0 && DorkaDamage != -1){ //ENEMY HIT YOU
+                        out.println("The enemy used " + DorkaMove + ", and succesfully hit you for " + DorkaDamage);
+                    }else if(DorkaDamage == 0){
+                        out.println("The enemy used " + DorkaMove + ", but it's attack missed!");
+                    }else if(DorkaDamage == -1){
+                        out.println("Awaiting enemy's move.....");
+                    }
+        
+                    //Apply Damage to enemy
+                    playerTwoCharacter.health_points = playerTwoCharacter.health_points - PalaDamage;
+
+                    // Status Printout 
+                    out.println(character.char_name + " HP = " + character.health_points + "\t\t"+ playerTwoCharacter.char_name +" HP = " + playerTwoCharacter.health_points);
+                    
+                }
+                // P2 is Dorkafus
+                else if (character.char_name.equals("Dorkafus")){
+                    DorkaMove = character.move_set[selectAbility-1].toString();
+                    out.println("You used " + DorkaMove);
+
+                    //Apply Damage to enemy
+                    DorkaDamage = character.move_set[selectAbility-1].damage_value;
+
+                     //IF HITS
+                    if( Math.random() < character.move_set[selectAbility-1].accuracy){
+                        System.out.println("IF HIT ENTERED");
+                        out.println("Your move successfully connected! You deal " + DorkaDamage + " to the enemy!");
+                    }
+                    else{
+                        DorkaDamage = 0;
+                        System.out.println("MOVE MISSED");
+                        out.println("Your move missed! You deal " + DorkaDamage + " to the enemy");
+                    }
+
+                    // DIALOGUE RESPONSE TO ENEMY'S MOVE
+                    if(PalaDamage != 0 && PalaDamage != -1){ //ENEMY HIT YOU
+                        out.println("The enemy used " + PalaMove + ", and succesfully hit you for " + PalaDamage);
+                    }else if(PalaDamage == 0){
+                        out.println("The enemy used " + PalaMove + ", but it's attack missed!");
+                    }else if(PalaDamage == -1){
+                        out.println("Awaiting enemy's move.....");
+                    }
+                    
+                    playerOneCharacter.health_points = playerOneCharacter.health_points - DorkaDamage;
+
+                    // Status Printout 
+                    out.println(character.char_name + " HP = " + character.health_points + "\t\t"+ playerOneCharacter.char_name +" HP = " + playerOneCharacter.health_points);
+                }
+
+                os.flush();
+
+            }catch(Exception e){
+                e.printStackTrace();
+            }
+        
+
 
             /*
             * TODOOOOOOOOOO
@@ -207,9 +303,9 @@ class Game {
             * 
             * 
             */
+            /*
             try {
                 // OPPONENT was first player because we already swapped
-                
                 opponent.output.println("You used " + opponent.character.move_set[selectAbility-1].toString());
                 output.println("Opponent used " + opponent.character.move_set[selectAbility-1].toString());
                 
@@ -228,17 +324,41 @@ class Game {
                     opponent.output.println("Your move successfully connected! You deal " + damage + " to the enemy!");
                     opponent.output.println("Your remaining health is " + opponent.character.health_points );
                     opponent.output.println("Your opponent has " + character.health_points + " points left.");
+
+                    try{
+                        os.flush();
+                    }catch(Exception IOException){
+                        //do nothing 
+                    }
+                } else{
+                     // Current player Dialogue
+                    output.println("The enemy's move has missed! You take " + 0 + "!");
+
+                    // Opponent player Dialogue
+                    opponent.output.println("Your move missed! You deal " + 0 + " to the enemy!");
+                     try{
+                        os.flush();
+                    }catch(Exception IOException){
+                        //do nothing 
+                    }
                 }
 
                 if (hasWinner()) {
                     output.println("VICTORY");
                     opponent.output.println("DEFEAT");
+                    try{
+                        os.flush();
+                    }catch(Exception IOException){
+                        //do nothing 
+                    }
                 }
+                
             }
 
                catch (IllegalStateException e) {
                 output.println("MESSAGE " + e.getMessage());
             }
+            */
             }
         }
 

@@ -18,8 +18,8 @@ public class UserInterface {
 		System.out.println(cList);
 		
 		//Choose Character Player One and Two
-		Character playerOne = getPlayerCharacter(cList, "One");
-		Character playerTwo = getPlayerCharacter(cList, "Two");
+		Character playerOne = setPlayerCharacter(cList, "One");
+		Character playerTwo = setPlayerCharacter(cList, "Two");
 		
 		//Let the battle begin!
 		startBattle(playerOne, playerTwo);
@@ -88,7 +88,7 @@ public class UserInterface {
 		
 	}
 
-	private Character getPlayerCharacter(CharacterList cList, String player) {
+	public Character setPlayerCharacter(CharacterList cList, String player) {
 		@SuppressWarnings("resource")
 		Scanner kb = new Scanner(System.in);
 		System.out.print("\nPlayer " + player + ", Input the corresponding to the character you want: ");
@@ -102,7 +102,7 @@ public class UserInterface {
 			}
 			catch(InputMismatchException exception){
 				System.out.println("Invalid Input. Please Try again.");
-				return getPlayerCharacter(cList, player);
+				return setPlayerCharacter(cList, player);
 			}
 		}
 		while(true){
@@ -114,7 +114,7 @@ public class UserInterface {
 			}
 			catch(ArrayIndexOutOfBoundsException exception){
 				System.out.println("Not a valid character #. Please try again.");
-				return getPlayerCharacter(cList, player);
+				return setPlayerCharacter(cList, player);
 			}
 		}
 	}
@@ -124,7 +124,15 @@ public class UserInterface {
 	private void printStatus(Character c1, Character c2){
 		System.out.println("Player One HP: " + c1.health_points + "\t\t Player Two HP:" + c2.health_points);
 	}
+
+	// Print the current status of the players
+	// Maybe number of turns as well
+	public String printStatusString(Character c1, Character c2){
+		return ("Player One HP: " + c1.health_points + "\t\t Player Two HP:" + c2.health_points);
+	}
 	
 	
 
 }
+
+	
