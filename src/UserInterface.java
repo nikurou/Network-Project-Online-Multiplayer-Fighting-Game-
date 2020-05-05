@@ -107,7 +107,8 @@ public class UserInterface {
 		}
 		while(true){
 			try{
-				Character playerChar = cList.getCharacterFromIndex(pNum);
+				//Get a copy of the character object from the list
+				Character playerChar = cList.getCharacterFromIndex(pNum).copy();
 				System.out.println("Player " + player + " has chosen the character " + playerChar.char_name + "!");
 				return playerChar;
 			}
