@@ -255,6 +255,7 @@ class Game {
                         }
                     }
                     out.println(toReturn);
+                    out.println(" "); //ignore this
                 }
                 // P2 is Dorkafus
                 else if (character.char_name.equals("Dorkafus")){
@@ -305,6 +306,7 @@ class Game {
                         }
                     }
                     out.println(toReturn);
+                    out.println(" "); //ignore this
                 }
 
 

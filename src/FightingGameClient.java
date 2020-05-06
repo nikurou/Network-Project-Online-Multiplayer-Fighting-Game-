@@ -38,14 +38,14 @@ public class FightingGameClient {
                     System.out.println(line);  
                     i++;
                 }  
-            int k =0;
+           
             int move = 0;
             
             //GET INPUT TO SEND TO SERVER
             Scanner kb = new Scanner(System.in);
-            
-            while(k != 5){
-                k++;
+            boolean gameOver = false;
+            while(gameOver == false){
+                
                 
                 System.out.print("Please enter a move: ");
  
@@ -71,12 +71,22 @@ public class FightingGameClient {
         
                 //FETCH DATA AGAIN FOR DAMAGE DONE AND ETC.
                 int j = 0;
-                while((line = br.readLine()) != null && j != 6){
+                String line2;
+                
+                while((line2 = br.readLine()) != null && j != 7){
                     j++;
-                    System.out.println(line + " " + j) ;
-                }    
+                    System.out.println(line2);
 
-                System.out.println("Exited the while loop in game client!");
+                    if(line2.equals("Tied!") == true || line2.equals("Dorkafus wins!") == true || line2.equals("Paladoof wins!") == true){
+                        System.out.println("\n THANK YOU FOR PLAYING!!!! \n");
+                        gameOver = true;
+                    }
+                    
+                    // if((line2.startsWith("Tied") || line2.startsWith("Dork") || line2.startsWith("Pala")) && line2.equals("") == false ) {
+                    //     System.out.println("\n THANK YOU FOR PLAYING!!!! \n");
+                    //     gameOver = true;
+                    // } 
+                }     
             }
             kb.close();
         } catch (Exception e){
