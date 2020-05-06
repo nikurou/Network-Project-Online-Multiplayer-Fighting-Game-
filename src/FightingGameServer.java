@@ -19,9 +19,12 @@ public class FightingGameServer  extends  UserInterface{
             var pool = Executors.newFixedThreadPool(200);
             while (true){
                 //create object for game here
+                System.out.println("NEW GAME OBJECT CREATED");
                 Game game = new Game();
                 pool.execute(game.new Player(listener.accept(), "Dorkafus"));
                 pool.execute(game.new Player(listener.accept(), "Paladoof"));
+                System.out.println("GAME OBJECT DONE");
+                
             }
         }
     }
@@ -41,29 +44,15 @@ class Game {
 
     // Default Constructor Method 
     public Game(){
-        
-        //PROMPT BOTH PLAYERS FOR THEIR CHACTER CHOICE
-       // Action actionListObject = new Action();
 
-        // CHANGE LATER SO PLAYER CAN CHOOSE, FOR NOW WE HARDCODE IT
-        //this.playerOneCharacter = new Character("Dorkafus", 50, actionListObject.getMageSetList());  
-        //this.playerTwoCharacter = new Character("Paladoof", 125, actionListObject.getPaladinSetList());
-
-        //Player p1 = new Player( socket , playerOneCharacter);
-        //Player p2 = new Player( socket, playerTwoCharacter);
-
-        // IF P1 IS FIRST, CURRENT PLAYER == p1 
-        // if(true){
-        //     this.currentPlayer = p1;
-        // }else{
-        //     this.currentPlayer = p2;
-        // }
     }
 
+    // If someone has run out of HP, return true.
     public boolean hasWinner() {
-        return currentPlayer.character.health_points <= 0;
+        return (playerOneCharacter.health_points <= 0 || playerTwoCharacter.health_points <= 0);
     }
 
+    // NEVER ENTERED (MAY GET RID)
     public synchronized void move(int ability, Player player){
         System.out.println
         (
@@ -114,7 +103,7 @@ class Game {
         public void run() {
             try {
                 setup();
-                System.out.println("SETUP IS NOW DONE, ENTERING PROCESSCOMANDS");
+                //System.out.println("SETUP IS NOW DONE, ENTERING PROCESSCOMANDS");
                 processCommands();
             } catch (Exception e) { 
                 e.printStackTrace();
@@ -141,8 +130,8 @@ class Game {
 
 
           
-            output.println("\nWelcome to the Text Fighter Game " + character.char_name);
-            output.println("-----------------------------------------");
+            output.println("\nWelcome to the Text Fighter Game, " + character.char_name + " HP: " + character.health_points);
+            output.println("------------------------------------------------------------------------------");
             if (character.char_name.equals("Paladoof")) {// put character name here
                 currentPlayer = this; //check for currentPLayer variable
 
@@ -153,7 +142,8 @@ class Game {
                     // 1) action_name : description.....
                     output.println(i+1 + ") " + paladinSetList[i].moveDescriptonsToString());  
                 }
-             
+                output.println("------------------------------------------------------------------------------\n");
+
                 //flush here
                 //os.flush();
                
@@ -169,24 +159,24 @@ class Game {
                     // 1) action_name : description.....
                     output.println(i+1 + ") " + mageSetList[i].moveDescriptonsToString());  
                 }
-                
+                output.println("------------------------------------------------------------------------------\n");
+
                 //flush here
                 //os.flush();
             }
             
-            //SWAP USERS
-            System.out.println("THE USERS ARE NOW SWAPPING");
+            SWAP USERS
+            //System.out.println("THE USERS ARE NOW SWAPPING");
 
             opponent = currentPlayer;
-            opponent.opponent = this;
-            opponent.output.println("MESSAGE YOUR MOVE");   
+            opponent.opponent = this;  
             os.flush();  
         }
 
         private void processCommands() {
             
-            System.out.println("STATUS  =  WORKING"); 
-            System.out.println("HasNextInt() == " + input.hasNextInt());
+            //System.out.println("STATUS  =  WORKING"); 
+            //System.out.println("HasNextInt() == " + input.hasNextInt());
             
             while (input.hasNextInt()) {
                
@@ -218,12 +208,11 @@ class Game {
                 //SEND MOVE TO CLIENT
                 OutputStreamWriter  os = new OutputStreamWriter(socket.getOutputStream());
                 PrintWriter out = new PrintWriter(os);
-                out.println("From Server: " + " move number =" + selectAbility);
 
                 //P1 is always Paladoof 
                 if (character.char_name.equals("Paladoof")){ //get a message than your move hits/nothits dmg/dontdmg
                     PalaMove  = character.move_set[selectAbility-1].toString();
-                    out.println("You used " + PalaMove);
+                    out.println("\nYou used " + PalaMove);
                     PalaDamage = character.move_set[selectAbility-1].damage_value;
 
                     //IF HITS
@@ -236,7 +225,6 @@ class Game {
                         System.out.println("MOVE MISSED");
                         out.println("Your move missed! You deal " + PalaDamage + " to the enemy");
                     }
-
                     
                     // DIALOGUE RESPONSE TO ENEMY'S MOVE
                     if(DorkaDamage != 0 && DorkaDamage != -1){ //ENEMY HIT YOU
@@ -251,13 +239,13 @@ class Game {
                     playerTwoCharacter.health_points = playerTwoCharacter.health_points - PalaDamage;
 
                     // Status Printout 
-                    out.println(character.char_name + " HP = " + character.health_points + "\t\t"+ playerTwoCharacter.char_name +" HP = " + playerTwoCharacter.health_points);
+                    out.println("\n"+character.char_name + " HP = " + character.health_points + "\t\t"+ playerTwoCharacter.char_name +" HP = " + playerTwoCharacter.health_points);
                     
                 }
                 // P2 is Dorkafus
                 else if (character.char_name.equals("Dorkafus")){
                     DorkaMove = character.move_set[selectAbility-1].toString();
-                    out.println("You used " + DorkaMove);
+                    out.println("\nYou used " + DorkaMove);
 
                     //Apply Damage to enemy
                     DorkaDamage = character.move_set[selectAbility-1].damage_value;
@@ -271,7 +259,7 @@ class Game {
                         DorkaDamage = 0;
                         System.out.println("MOVE MISSED");
                         out.println("Your move missed! You deal " + DorkaDamage + " to the enemy");
-                    }
+                    } 
 
                     // DIALOGUE RESPONSE TO ENEMY'S MOVE
                     if(PalaDamage != 0 && PalaDamage != -1){ //ENEMY HIT YOU
@@ -281,11 +269,12 @@ class Game {
                     }else if(PalaDamage == -1){
                         out.println("Awaiting enemy's move.....");
                     }
-                    
+                   
+
                     playerOneCharacter.health_points = playerOneCharacter.health_points - DorkaDamage;
 
                     // Status Printout 
-                    out.println(character.char_name + " HP = " + character.health_points + "\t\t"+ playerOneCharacter.char_name +" HP = " + playerOneCharacter.health_points);
+                    out.println("\n"+character.char_name + " HP = " + character.health_points + "\t\t"+ playerOneCharacter.char_name +" HP = " + playerOneCharacter.health_points);
                 }
 
                 os.flush();

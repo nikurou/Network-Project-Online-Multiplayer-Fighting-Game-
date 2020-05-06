@@ -35,8 +35,8 @@ public class FightingGameClient {
             BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             
             String line; int i = 0;
-            while((line = br.readLine()) != null && i != 5){    //HARDCODED LENGTH OF MENU SO ANYTIME ALTER, CHECK THIS
-                System.out.println(line + " "  + line.length());  
+            while((line = br.readLine()) != null && i != 6){    //HARDCODED LENGTH OF MENU SO ANYTIME ALTER, CHECK THIS
+                System.out.println(line);  
                 i++;
             }  
             
@@ -51,7 +51,6 @@ public class FightingGameClient {
                     System.out.println("The input you entered is not valid, please try again.");
                 }
             }
-            System.out.println("Move is " + move);
             kb.close();
             
             //SEND DATA TO SERVER
@@ -63,8 +62,10 @@ public class FightingGameClient {
             
     
             //FETCH DATA AGAIN FOR DAMAGE DONE AND ETC.
-            while((line = br.readLine()) != null && line.length() > 0){
-                System.out.println(line);
+            int j = 0;
+            while((line = br.readLine()) != null && j != 7){
+                j++;
+                System.out.println(line) ;
             }    
 
             /*
@@ -73,7 +74,7 @@ public class FightingGameClient {
         } catch (Exception e){
             e.printStackTrace();
         } finally {
-            socket.close();
+            //socket.close();
         }
     }
 
@@ -84,6 +85,9 @@ public class FightingGameClient {
         //     return;
         // }
         FightingGameClient client = new FightingGameClient(args[0]);
-        client.play();
+        while(true){
+            client.play();
+        }
+        
     }
 }
