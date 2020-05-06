@@ -165,7 +165,7 @@ class Game {
                 //os.flush();
             }
             
-            SWAP USERS
+            //SWAP USERS
             //System.out.println("THE USERS ARE NOW SWAPPING");
 
             opponent = currentPlayer;
@@ -241,6 +241,20 @@ class Game {
                     // Status Printout 
                     out.println("\n"+character.char_name + " HP = " + character.health_points + "\t\t"+ playerTwoCharacter.char_name +" HP = " + playerTwoCharacter.health_points);
                     
+                    //WIN CONDITION
+                    String toReturn = "No one won yet";
+                    if(hasWinner() == true ){
+                        if(playerOneCharacter.health_points <= 0 && playerTwoCharacter.health_points <= 0){
+                            toReturn = ("Tied!");
+                        }
+                        else if(playerOneCharacter.health_points <= 0){ //Player One dies, so player Two wins
+                            toReturn = (playerTwoCharacter.char_name + " wins!");
+                        }
+                        else if(playerTwoCharacter.health_points <= 0) {
+                            toReturn = (playerOneCharacter.char_name + " wins!");
+                        }
+                    }
+                    out.println(toReturn);
                 }
                 // P2 is Dorkafus
                 else if (character.char_name.equals("Dorkafus")){
@@ -269,13 +283,30 @@ class Game {
                     }else if(PalaDamage == -1){
                         out.println("Awaiting enemy's move.....");
                     }
+
                    
 
                     playerOneCharacter.health_points = playerOneCharacter.health_points - DorkaDamage;
 
                     // Status Printout 
                     out.println("\n"+character.char_name + " HP = " + character.health_points + "\t\t"+ playerOneCharacter.char_name +" HP = " + playerOneCharacter.health_points);
+                    
+                    //WIN CONDITION
+                    String toReturn = "No one won yet";
+                    if(hasWinner() == true ){
+                        if(playerOneCharacter.health_points <= 0 && playerTwoCharacter.health_points <= 0){
+                            toReturn = ("Tied!");
+                        }
+                        else if(playerOneCharacter.health_points <= 0){ //Player One dies, so player Two wins
+                            toReturn = (playerTwoCharacter.char_name + " wins!");
+                        }
+                        else if(playerTwoCharacter.health_points <= 0) {
+                            toReturn = (playerOneCharacter.char_name + " wins!");
+                        }
+                    }
+                    out.println(toReturn);
                 }
+
 
                 os.flush();
 
