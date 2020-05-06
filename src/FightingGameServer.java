@@ -242,7 +242,7 @@ class Game {
                     out.println("\n"+character.char_name + " HP = " + character.health_points + "\t\t"+ playerTwoCharacter.char_name +" HP = " + playerTwoCharacter.health_points);
                     
                     //WIN CONDITION
-                    String toReturn = "No one won yet";
+                    String toReturn = " ";
                     if(hasWinner() == true ){
                         if(playerOneCharacter.health_points <= 0 && playerTwoCharacter.health_points <= 0){
                             toReturn = ("Tied!");
